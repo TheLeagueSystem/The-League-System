@@ -39,6 +39,7 @@ import { Slider } from "../components/ui/slider";
 
 import RoundResults from "../components/RoundResults";
 import { fetchWithAuth } from '../utils/api';
+import { apiConfig } from '../config/apiConfig';
 
 interface RoundData {
   id: number;
@@ -155,7 +156,7 @@ const ActiveRound: React.FC = () => {
       setResultSubmitting(true);
       const token = localStorage.getItem("token");
       
-      const response = await fetch(`http://127.0.0.1:8000/api/round/${roundId}/results/`, {
+      const response = await fetch(`${apiConfig.baseURL}/api/round/${roundId}/results/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -15,6 +15,8 @@ from django.db import connections
 from django.db.utils import OperationalError
 import os
 from dotenv import load_dotenv
+import dj_database_url  # Add this import (you'll need to install this package)
+from django.core.management.utils import get_random_secret_key
 
 # Load environment variables from .env file
 load_dotenv()
@@ -27,12 +29,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rgzv_!7y=du@4n*06goyh%tiy%s%cy4i&r^$4q48$^fjvnr1_5'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-rgzv_!7y=du@4n*06goyh%tiy%s%cy4i&r^$4q48$^fjvnr1_5')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1',
+    '.onrender.com',  # Allows all subdomains on onrender.com
+    # Add your custom domain if you have one
+]
 
 
 # Application definition
@@ -51,10 +58,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'rdj_demo.middleware.DebugMiddleware',  # Add this for debugging
+    'django.middleware.security.SecurityMiddleware',  # Should be first
+    'whitenoise.middleware.WhiteNoiseMiddleware',     # Should be second
+    'corsheaders.middleware.CorsMiddleware',          # Should be third
+    'rdj_demo.middleware.DebugMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -105,6 +113,13 @@ DATABASES = {
         'CONN_MAX_AGE': 600,  # Keep connections alive for performance
     }
 }
+
+# This fallback for Render looks good
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        ssl_require=True
+    )
 
 
 # Password validation
@@ -163,6 +178,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -172,22 +189,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
+    "http://localhost:3000",  # React frontend (for development)
+    "https://league-system.onrender.com",  # Your actual frontend URL
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
+    "https://league-system.onrender.com",
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # For development only
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_ALL_ORIGINS = False  # Turn this OFF for production
+CORS_ALLOW_HEADERS = [
+    "authorization",
+    "content-type",
+]
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
-
-# For production, specify allowed origins
-# CORS_ALLOWED_ORIGINS = [
-#     "https://yourdomain.com",
-# ]
 
 import os
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'build')]

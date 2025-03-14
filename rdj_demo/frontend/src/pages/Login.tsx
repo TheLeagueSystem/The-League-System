@@ -6,6 +6,7 @@ import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { ThemeToggle } from "src/components/ThemeToggle";
+import { apiConfig } from '../config/apiConfig';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -35,7 +36,7 @@ const Login: React.FC = () => {
       setLoading(true);
       setError("");
       
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      const response = await fetch(`${apiConfig.baseURL}/api/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

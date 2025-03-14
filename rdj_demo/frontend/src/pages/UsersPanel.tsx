@@ -11,6 +11,7 @@ import { Label } from "src/components/ui/label";
 import { UserPlus, X, Trash2, Check, Shield, UserCog, X as XIcon, ArrowLeft } from "lucide-react"; // Added ArrowLeft
 import { useNavigate } from "react-router-dom"; // Add this import
 import { motion } from "framer-motion"; // Add this import for animations
+import { apiConfig } from '../config/apiConfig'; // Add this import
 
 // Define user type
 interface User {
@@ -62,7 +63,7 @@ const UsersPanel: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       
-      const response = await fetch("http://127.0.0.1:8000/api/admin/users/", {
+      const response = await fetch(`${apiConfig.baseURL}/api/admin/users/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +91,7 @@ const UsersPanel: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       
-      const response = await fetch("http://127.0.0.1:8000/api/admin/users/", {
+      const response = await fetch(`${apiConfig.baseURL}/api/admin/users/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +126,7 @@ const UsersPanel: React.FC = () => {
     try {
       const token = localStorage.getItem("token");
       
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/users/${userId}/`, {
+      const response = await fetch(`${apiConfig.baseURL}/api/admin/users/${userId}/`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +152,7 @@ const UsersPanel: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       
-      const response = await fetch(`http://127.0.0.1:8000/api/admin/users/${userId}/`, {
+      const response = await fetch(`${apiConfig.baseURL}/api/admin/users/${userId}/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -1,20 +1,20 @@
+import { apiConfig } from '../config/apiConfig';
+
 // API helper functions
 export const getApiBaseUrl = () => {
-  // Check if we're in development or production
-  return process.env.NODE_ENV === 'production' 
-    ? '/api' // Production API URL (relative)
-    : 'http://127.0.0.1:8000/api'; // Development API URL (with localhost)
+  return apiConfig.baseURL + '/api';
 };
 
 // The function should be exported like this:
-export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
+export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("token");
   
   if (!token) {
     throw new Error("Authentication required. Please log in again.");
   }
   
-  const url = `${getApiBaseUrl()}${endpoint}`;
+  // This is correct - keep it this way:
+  const url = `${apiConfig.baseURL}${endpoint}`;
   
   const headers = {
     "Content-Type": "application/json",
@@ -61,4 +61,4 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
     console.error("API Request failed:", error);
     throw error;
   }
-}
+};

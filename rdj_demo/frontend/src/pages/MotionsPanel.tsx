@@ -69,9 +69,9 @@ const MotionsPanel: React.FC = () => {
   const fetchMotions = async () => {
     try {
       setLoading(true);
-      console.log("Fetching motions from endpoint:", '/motions/');
+      console.log("Fetching motions from endpoint:", '/api/motions/');
       
-      const data = await fetchWithAuth('/motions/');
+      const data = await fetchWithAuth('/api/motions/');
       console.log("Motions response data:", data);
       
       // Make sure you're handling the response structure correctly
