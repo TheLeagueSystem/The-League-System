@@ -190,12 +190,12 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React frontend (for development)
-    "https://league-system.onrender.com",  # Your actual frontend URL
+    "https://the-league-system.onrender.com",  # Your actual frontend URL
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
-    "https://league-system.onrender.com",
+    "https://the-league-system.onrender.com",
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False  # Turn this OFF for production
