@@ -62,7 +62,7 @@ def check_db_connection(request):
                 "database": {
                     "engine": connections.databases['default']['ENGINE'],
                     "name": connections.databases['default']['NAME'],
-                    "user": connections.databases['default']['USER'],
+                    "user": connections.databases['default']['USER'][:5] + "...",  # Hide full username
                     "host": connections.databases['default']['HOST'],
                     "port": connections.databases['default']['PORT'],
                 }
