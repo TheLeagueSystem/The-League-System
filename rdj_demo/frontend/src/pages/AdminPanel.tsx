@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card
 import { FileText, Users, PlayCircle, Bell } from "lucide-react"; // Added Bell icon
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import ApiDebugger from '../components/ApiDebugger';
 
 const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
@@ -124,6 +125,11 @@ const AdminPanel: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
+      </div>
+
+      {/* API Debugger */}
+      <div className="col-span-1 md:col-span-2 mt-6">
+        <ApiDebugger />
       </div>
     </div>
   );

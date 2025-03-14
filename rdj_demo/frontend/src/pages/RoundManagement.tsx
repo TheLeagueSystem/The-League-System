@@ -94,12 +94,18 @@ const RoundManagement: React.FC = () => {
       setLoading(true);
       console.log("Fetching rounds...");
       
-      // Use specific endpoint with proper error handling
+      // Fix URL prefix - add the missing /api/ prefix
       const data = await fetchWithAuth("/api/admin/rounds/");
       console.log("Rounds data:", data);
       
-      setRounds(data || []);
-      setError("");
+      // Add safety checks for the response
+      if (Array.isArray(data)) {
+        setRounds(data);
+      } else {
+        console.error("Unexpected response format:", data);
+        setRounds([]);
+        setError("Server returned an invalid response format");
+      }
     } catch (err: any) {
       console.error("Error fetching rounds:", err);
       setError("Could not load rounds. Please check your connection and try again.");

@@ -44,6 +44,9 @@ ChartJS.register(
   Legend
 );
 
+// Add this import at the top
+import ApiDebugger from '../components/ApiDebugger';
+
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("main");
