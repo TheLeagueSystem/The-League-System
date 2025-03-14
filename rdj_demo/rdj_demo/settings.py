@@ -186,8 +186,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_CREDENTIALS = True
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React frontend (for development)
     "https://the-league-system.onrender.com",  # Your actual frontend URL
@@ -205,8 +203,8 @@ CORS_ALLOW_HEADERS = [
 ]
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
-import os
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'build')]
+frontend_build_dir = os.path.join(BASE_DIR, 'frontend', 'build')
+STATICFILES_DIRS = [frontend_build_dir] if os.path.isdir(frontend_build_dir) else []
 
 # Add this to your Django settings.py to help debug database issues
 
