@@ -1,0 +1,81 @@
+# Fixing Yarn Frozen Lockfile Error on Render
+
+The error is occurring because Render is using Yarn with the `--frozen-lockfile` flag by default, but your dependencies have changed. Let's fix this by explicitly telling Render to use npm instead of Yarn.
+
+## Solution: Tell Render to Use npm Instead of Yarn
+
+Since you've already added the `render-build` script to your package.json, you need to tell Render to use npm instead of Yarn:
+
+### Option 1: Add a .npmrc File
+
+1. **Create a new file** called `.npmrc` in your frontend directory:
+
+```
+engine-strict=false
+legacy-peer-deps=true
+```
+
+2. **Create a new file** called `.yarnrc` in your frontend directory to disable Yarn:
+
+```
+--install.ignore-engines true
+```
+
+3. **Commit and push these files**:
+```bash
+git add rdj_demo/frontend/.npmrc rdj_demo/frontend/.yarnrc
+git commit -m "Add npm and yarn config files for Render"
+git push origin main
+```
+
+### Option 2: Add render.yaml File (More Control)
+
+Create a `render.yaml` file in your project root:
+
+```yaml
+services:
+  - type: web
+    name: league-system-backend
+    env: python
+    buildCommand: cd rdj_demo && chmod +x build.sh && ./build.sh
+    startCommand: cd rdj_demo && gunicorn rdj_demo.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        generateValue: true
+      # Add other environment variables here
+
+  - type: static
+    name: league-system-frontend
+    env: static
+    buildCommand: cd rdj_demo/frontend && rm -rf node_modules yarn.lock package-lock.json && npm install --legacy-peer-deps && npm run build
+    staticPublishPath: rdj_demo/frontend/build
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://league-system-backend.onrender.com
+```
+
+### Option 3: Manual Configuration in Render
+
+If you can't get the above options to work, try updating the build command directly in the Render dashboard:
+
+1. Go to your frontend service in Render
+2. Change the build command to:
+   ```
+   cd rdj_demo/frontend && rm -rf node_modules yarn.lock package-lock.json && npm install --legacy-peer-deps && npm run build
+   ```
+3. Make sure the publish directory is set to: build
+4. Save changes and deploy
+
+### Option 4: Move to npm-only Project
+
+The most reliable fix is to remove Yarn-related files and use npm exclusively:
+
+1. **Remove `yarn.lock`** if it exists in your project:
+   ```bash
+   git rm rdj_demo/frontend/yarn.
