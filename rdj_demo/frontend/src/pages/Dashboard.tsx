@@ -11,8 +11,7 @@ import { motion } from "framer-motion";
 import { Input } from "src/components/ui/input";
 import { Alert, AlertDescription } from "src/components/ui/alert";
 import { fetchWithAuth } from '../utils/api';
-
-// Add these imports at the top of your file
+import { useNotifications } from '../contexts/NotificationContext';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,9 +27,6 @@ import {
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 
-// Add this import at the top
-import { useNotifications } from '../contexts/NotificationContext';
-
 // Register Chart.js components
 ChartJS.register(
   CategoryScale,
@@ -43,9 +39,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-// Add this import at the top
-import ApiDebugger from '../components/ApiDebugger';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
