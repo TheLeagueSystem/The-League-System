@@ -50,13 +50,8 @@ const MotionGlossary: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       
-      const response = await fetchWithAuth('/api/motions/glossary/');
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch motions");
-      }
-
-      const data = await response.json();
+      const data = await fetchWithAuth('/api/motions/glossary/');
+      console.log("Motion glossary response:", data);
       setMotions(data.motions || []);
       setAvailableThemes(data.themes || []);
       setAvailableCompetitions(data.competition_types || []);

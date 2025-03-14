@@ -7,38 +7,58 @@ export const getApiBaseUrl = () => {
 
 // The function should be exported like this:
 export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
-  // Ensure endpoint starts with a slash but not with '/api' if the baseURL already includes it
-  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  // Normalize the endpoint path
+  let normalizedEndpoint = endpoint;
+  
+  // Ensure endpoint starts with /
+  if (!normalizedEndpoint.startsWith('/')) {
+    normalizedEndpoint = `/${normalizedEndpoint}`;
+  }
+  
+  // Make sure endpoint starts with /api/ unless it already does
+  if (!normalizedEndpoint.startsWith('/api/')) {
+    normalizedEndpoint = `/api${normalizedEndpoint}`;
+  }
   
   // Construct the full URL
   const url = `${apiConfig.baseURL}${normalizedEndpoint}`;
   
-  // Set up the headers with authentication
-  const headers = {
+  console.log(`API Request: ${options.method || 'GET'} ${url}`);
+  
+  // Set up authentication headers
+  const token = localStorage.getItem('token');
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'Authorization': `Token ${localStorage.getItem('token') || ''}`,
-    ...options.headers
+    ...(options.headers as Record<string, string>)
   };
+  
+  if (token) {
+    headers['Authorization'] = `Token ${token}`;
+  }
 
-  // Combine with other options
-  const fetchOptions = {
-    ...options,
-    headers
-  };
-
+  // Make the request
   try {
-    const response = await fetch(url, fetchOptions);
+    const response = await fetch(url, {
+      ...options,
+      headers
+    });
     
-    // Handle non-2xx responses
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `Request failed with status ${response.status}`);
+      // Try to get error details from response
+      let errorMessage;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || `Server returned ${response.status}: ${response.statusText}`;
+      } catch {
+        errorMessage = `Server returned ${response.status}: ${response.statusText}`;
+      }
+      
+      throw new Error(errorMessage);
     }
     
-    // Return the parsed JSON response
     return await response.json();
   } catch (error) {
-    console.error(`API Error (${url}):`, error);
+    console.error("API Error:", error);
     throw error;
   }
 };

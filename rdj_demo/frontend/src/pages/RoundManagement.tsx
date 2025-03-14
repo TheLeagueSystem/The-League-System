@@ -95,7 +95,7 @@ const RoundManagement: React.FC = () => {
       console.log("Fetching rounds...");
       
       // Use specific endpoint with proper error handling
-      const data = await fetchWithAuth("/admin/rounds/");
+      const data = await fetchWithAuth("/api/admin/rounds/");
       console.log("Rounds data:", data);
       
       setRounds(data || []);
