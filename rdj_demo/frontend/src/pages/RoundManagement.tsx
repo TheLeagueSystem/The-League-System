@@ -88,17 +88,21 @@ const RoundManagement: React.FC = () => {
     fetchRounds();
   }, []);
 
-  // Update the fetchRounds function
+  // Inside the fetchRounds function, update your error handling:
   const fetchRounds = async () => {
     try {
       setLoading(true);
-      const data = await fetchWithAuth('/admin/rounds/');
-      setRounds(data.rounds || []);
+      console.log("Fetching rounds...");
+      
+      // Use specific endpoint with proper error handling
+      const data = await fetchWithAuth("/admin/rounds/");
+      console.log("Rounds data:", data);
+      
+      setRounds(data || []);
       setError("");
     } catch (err: any) {
-      const errorMsg = err.message || "An error occurred while fetching rounds";
-      setError(errorMsg);
       console.error("Error fetching rounds:", err);
+      setError("Could not load rounds. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
