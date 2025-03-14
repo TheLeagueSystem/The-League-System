@@ -20,6 +20,7 @@ import {
   DialogFooter,
 } from "../components/ui/dialog";
 import { fetchWithAuth } from '../utils/api';
+import { apiConfig } from "src/config/apiConfig";
 
 interface Round {
   id: number;
@@ -44,6 +45,8 @@ interface Round {
 }
 
 const RoundManagement: React.FC = () => {
+  console.log("Rendering RoundManagement component");
+  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -88,31 +91,56 @@ const RoundManagement: React.FC = () => {
     fetchRounds();
   }, []);
 
-  // Inside the fetchRounds function, update your error handling:
-  const fetchRounds = async () => {
+  // Replace the fetchRounds function with this improved version:
+const fetchRounds = async () => {
+  try {
+    setLoading(true);
+    console.log("Fetching rounds...");
+    
+    // First, try the regular endpoint with proper error handling
     try {
-      setLoading(true);
-      console.log("Fetching rounds...");
+      const response = await fetch(`${apiConfig.baseURL}/api/admin/rounds/`, {
+        headers: {
+          'Authorization': `Token ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       
-      // Fix URL prefix - add the missing /api/ prefix
-      const data = await fetchWithAuth("/api/admin/rounds/");
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Response is not JSON');
+      }
+      
+      const data = await response.json();
       console.log("Rounds data:", data);
       
-      // Add safety checks for the response
+      // Handle both array and object response formats
       if (Array.isArray(data)) {
         setRounds(data);
+        setError("");
+      } else if (data && data.rounds && Array.isArray(data.rounds)) {
+        setRounds(data.rounds);
+        setError("");
       } else {
         console.error("Unexpected response format:", data);
         setRounds([]);
         setError("Server returned an invalid response format");
       }
-    } catch (err: any) {
-      console.error("Error fetching rounds:", err);
-      setError("Could not load rounds. Please check your connection and try again.");
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error("Error with primary fetch:", error);
+      throw error;
     }
-  };
+  } catch (err) {
+    console.error("Error fetching rounds:", err);
+    setError("Could not load rounds. Please check your connection and try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleBack = () => {
     navigate("/dashboard");
@@ -187,6 +215,12 @@ const RoundManagement: React.FC = () => {
     }
   };
   
+  useEffect(() => {
+    // This will help track component mounting and error states
+    console.log("RoundManagement mounted");
+    return () => console.log("RoundManagement unmounted");
+  }, []);
+
   return (
     <motion.div 
       className="p-4"
