@@ -11,6 +11,8 @@ import {
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
 import { FileText, Search, Filter, X } from "lucide-react";
+import { apiConfig } from '../config/apiConfig';
+import { fetchWithAuth } from '../utils/api';
 
 // Define motion type
 interface Theme {
@@ -48,13 +50,7 @@ const MotionGlossary: React.FC = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       
-      const response = await fetch("http://127.0.0.1:8000/api/motions/glossary/", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Token ${token}`
-        },
-      });
+      const response = await fetchWithAuth('/api/motions/glossary/');
 
       if (!response.ok) {
         throw new Error("Failed to fetch motions");

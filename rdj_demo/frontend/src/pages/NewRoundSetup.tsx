@@ -72,7 +72,7 @@ const NewRoundSetup: React.FC = () => {
       setLoading(true);
       console.log("Fetching motions and themes...");
       
-      const response = await fetchWithAuth('/motions/');
+      const response = await fetchWithAuth('/api/motions/');
       console.log("Raw motions response:", response);
       
       // Parse and convert to your local Motion type

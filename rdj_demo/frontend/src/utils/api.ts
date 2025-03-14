@@ -7,58 +7,38 @@ export const getApiBaseUrl = () => {
 
 // The function should be exported like this:
 export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
-  const token = localStorage.getItem("token");
+  // Ensure endpoint starts with a slash but not with '/api' if the baseURL already includes it
+  const normalizedEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   
-  if (!token) {
-    throw new Error("Authentication required. Please log in again.");
-  }
+  // Construct the full URL
+  const url = `${apiConfig.baseURL}${normalizedEndpoint}`;
   
-  // This is correct - keep it this way:
-  const url = `${apiConfig.baseURL}${endpoint}`;
-  
+  // Set up the headers with authentication
   const headers = {
-    "Content-Type": "application/json",
-    "Authorization": `Token ${token}`,
-    ...(options.headers || {})
+    'Content-Type': 'application/json',
+    'Authorization': `Token ${localStorage.getItem('token') || ''}`,
+    ...options.headers
   };
-  
+
+  // Combine with other options
+  const fetchOptions = {
+    ...options,
+    headers
+  };
+
   try {
-    console.log(`Fetching from: ${url}`, { method: options.method || 'GET' });
+    const response = await fetch(url, fetchOptions);
     
-    const response = await fetch(url, {
-      ...options,
-      headers
-    });
-    
-    console.log(`Response status: ${response.status}`);
-    
+    // Handle non-2xx responses
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Request failed with status ${response.status}`);
     }
     
-    // Check content type before trying to parse as JSON
-    const contentType = response.headers.get('content-type');
-    
-    // Parse response based on content type
-    if (contentType && contentType.includes('application/json')) {
-      const data = await response.json();
-      return data;
-    } else {
-      // Handle non-JSON responses
-      const text = await response.text();
-      if (text.length === 0) {
-        return null; // Empty response
-      }
-      try {
-        // Try to parse as JSON anyway, in case content type header is wrong
-        return JSON.parse(text);
-      } catch (e) {
-        // Return as text if parsing fails
-        return text;
-      }
-    }
-  } catch (error: any) {
-    console.error("API Request failed:", error);
+    // Return the parsed JSON response
+    return await response.json();
+  } catch (error) {
+    console.error(`API Error (${url}):`, error);
     throw error;
   }
 };
