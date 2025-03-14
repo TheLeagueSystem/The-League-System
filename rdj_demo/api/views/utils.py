@@ -44,3 +44,36 @@ def check_db_structure(request):
             }, status=500)
     
     return JsonResponse({"status": "error", "message": "Only GET method is allowed"}, status=405)
+
+@csrf_exempt
+def check_db_connection(request):
+    """Check if the database connection is working."""
+    if request.method == 'GET':
+        try:
+            from django.db import connections
+            from django.db.utils import OperationalError
+            
+            db_conn = connections['default']
+            db_conn.cursor()
+            
+            return JsonResponse({
+                "status": "success",
+                "message": "Database connection successful",
+                "database": {
+                    "engine": connections.databases['default']['ENGINE'],
+                    "name": connections.databases['default']['NAME'],
+                    "user": connections.databases['default']['USER'],
+                    "host": connections.databases['default']['HOST'],
+                    "port": connections.databases['default']['PORT'],
+                }
+            })
+        except OperationalError as e:
+            import traceback
+            return JsonResponse({
+                "status": "error",
+                "message": "Database connection failed",
+                "error": str(e),
+                "traceback": traceback.format_exc()
+            }, status=500)
+    
+    return JsonResponse({"status": "error", "message": "Only GET method is allowed"}, status=405)

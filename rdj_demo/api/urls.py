@@ -16,7 +16,7 @@ from .views.round_views import (
     RoundDetailView, RoundResultView, JoinRoundView, 
     RoundStatusView, RoundWaitingRoomView, RoundAllocationDetailsView, RoundSetupView
 )
-from .views.utils import check_db_structure
+from .views.utils import check_db_structure, check_db_connection
 
 
 urlpatterns = [
@@ -50,6 +50,8 @@ urlpatterns = [
     
     # Utils Routes
     path('utils/check-db/', check_db_structure, name='check_db'),
+    path('debug/db-structure/', check_db_structure, name='check_db_structure'),
+    path('debug/db-connection/', check_db_connection, name='check_db_connection'),
 
     # Round management endpoints
     path("admin/rounds/", AdminRoundListView.as_view(), name="admin_rounds_list"),
