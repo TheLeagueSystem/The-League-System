@@ -1,0 +1,20 @@
+# Django
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv
+env/
+venv/
+ENV/
+db.sqlite3
+media/
+
+# React (already covered in frontend/.gitignore)
+node_modules/
+build/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
