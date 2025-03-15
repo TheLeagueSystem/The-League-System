@@ -12,7 +12,7 @@ import RoundSetup from "../pages/RoundSetup";
 import ActiveRound from "../pages/ActiveRound";
 import RoundManagement from "../pages/RoundManagement";
 import NotificationManagement from "../pages/NotificationManagement";
-import LogsPanel from "../pages/LogsPanel";
+import LogsPanel from "../pages/LogsPanel";  // Check this path is correct
 
 // Define Props interface for the ProtectedRoute component
 interface ProtectedRouteProps {
