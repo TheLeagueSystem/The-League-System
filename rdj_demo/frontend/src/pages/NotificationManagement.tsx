@@ -122,7 +122,7 @@ const NotificationManagement: React.FC = () => {
 
   const fetchSentNotifications = async () => {
     try {
-      const data = await fetchWithAuth('/admin/notifications/');
+      const data = await fetchWithAuth('/api/admin/notifications/');
       setSentNotifications(data);
       setLoading(false);
     } catch (err: any) {

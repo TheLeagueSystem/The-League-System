@@ -17,6 +17,7 @@ from .views.round_views import (
     RoundStatusView, RoundWaitingRoomView, RoundAllocationDetailsView, RoundSetupView
 )
 from .views.utils import check_db_structure, check_db_connection
+from .views.log_views import AdminLogsAttendanceView, AdminLogsSystemView
 
 
 urlpatterns = [
@@ -75,4 +76,8 @@ urlpatterns = [
     path('notifications/<int:notification_id>/', notification_views.NotificationActionView.as_view(), name='notification_action'),
     path('notifications/actions/', notification_views.NotificationActionView.as_view(), name='notification_actions'),
     path('admin/notifications/', notification_views.AdminNotificationListView.as_view(), name='admin_notifications'),
+
+    # Log Routes
+    path('admin/logs/attendance/', AdminLogsAttendanceView.as_view(), name='admin_logs_attendance'),
+    path('admin/logs/system/', AdminLogsSystemView.as_view(), name='admin_logs_system'),
 ]

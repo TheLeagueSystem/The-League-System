@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
-import { FileText, Users, PlayCircle, Bell } from "lucide-react"; // Added Bell icon
+import { FileText, Users, PlayCircle, Bell, FileBarChart2 } from "lucide-react"; // Added Bell and FileBarChart2 icons
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
 import ApiDebugger from '../components/ApiDebugger';
@@ -34,6 +34,13 @@ const AdminPanel: React.FC = () => {
   const handleNavigateToNotifications = () => {
     pageTransition(() => {
       navigate('/admin/notifications');
+    });
+  };
+
+  // Handler for activity logs
+  const handleNavigateToLogs = () => {
+    pageTransition(() => {
+      navigate('/admin/logs');
     });
   };
 
@@ -122,6 +129,27 @@ const AdminPanel: React.FC = () => {
               className="w-full bg-blue-600 hover:bg-blue-700"
             >
               Manage Notifications
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* NEW: Activity Logs Card */}
+        <Card className="shadow-lg dark:bg-gray-800 light:bg-white">
+          <CardHeader>
+            <CardTitle className="flex items-center dark:text-white light:text-gray-800">
+              <FileBarChart2 className="mr-2" size={22} />
+              Activity Logs
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm dark:text-gray-300 light:text-gray-600 mb-4">
+              Monitor user activity across rounds. View and export attendance logs, participation history, and system events.
+            </p>
+            <Button 
+              onClick={handleNavigateToLogs}
+              className="w-full bg-amber-600 hover:bg-amber-700"
+            >
+              View Logs
             </Button>
           </CardContent>
         </Card>

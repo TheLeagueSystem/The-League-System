@@ -254,3 +254,22 @@ class Notification(models.Model):
     
     def __str__(self):
         return f"{self.type}: {self.message[:30]}..."
+
+# Add this model to your existing models
+
+class ActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activity_logs')
+    round = models.ForeignKey(Round, on_delete=models.CASCADE, related_name='activity_logs')
+    role = models.CharField(max_length=50)
+    action = models.CharField(max_length=20, choices=[
+        ('joined', 'Joined Round'),
+        ('allocated', 'Allocated'),
+        ('completed', 'Completed Round'),
+    ])
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-timestamp']
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.action} - Round {self.round.id}"

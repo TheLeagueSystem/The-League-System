@@ -12,6 +12,7 @@ import RoundSetup from "../pages/RoundSetup";
 import ActiveRound from "../pages/ActiveRound";
 import RoundManagement from "../pages/RoundManagement";
 import NotificationManagement from "../pages/NotificationManagement";
+import LogsPanel from "../pages/LogsPanel";
 
 // Define Props interface for the ProtectedRoute component
 interface ProtectedRouteProps {
@@ -110,6 +111,11 @@ const AnimatedRoutes: React.FC = () => {
         <Route path="/admin/notifications" element={
           <ProtectedRoute isAdmin={true}>
             <NotificationManagement />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/logs" element={
+          <ProtectedRoute isAdmin={true}>
+            <LogsPanel />
           </ProtectedRoute>
         } />
         

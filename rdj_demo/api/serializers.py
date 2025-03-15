@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Motion, Theme, Round, RoundAllocation  # Add Theme, Round, RoundAllocation import here
+from .models import User, Motion, Theme, Round, RoundAllocation, ActivityLog  # Add Theme, Round, RoundAllocation import here
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
@@ -116,3 +116,33 @@ class RoundDetailSerializer(serializers.ModelSerializer):
             'text': obj.motion.text,
             'theme': theme_data
         }
+
+# Add this serializer to your existing serializers
+
+class UserLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']
+
+class RoundLogSerializer(serializers.ModelSerializer):
+    motion = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Round
+        fields = ['id', 'format', 'motion']
+    
+    def get_motion(self, obj):
+        if (obj.motion):
+            return {
+                'text': obj.motion.text,
+                'theme': obj.motion.theme.name if obj.motion.theme else None
+            }
+        return {'text': 'No motion', 'theme': None}
+
+class ActivityLogSerializer(serializers.ModelSerializer):
+    user = UserLogSerializer()
+    round = RoundLogSerializer()
+    
+    class Meta:
+        model = ActivityLog
+        fields = ['id', 'user', 'round', 'role', 'action', 'timestamp']

@@ -8,6 +8,7 @@ from ..serializers import RoundSerializer, RoundDetailSerializer, RoundAllocatio
 from rest_framework.decorators import api_view, permission_classes
 from ..services.notification_service import create_notification, create_round_notification
 from ..permissions import IsStaffUser
+from ..models import ActivityLog
 
 def get_round_participants(round_obj):
     """
@@ -139,6 +140,12 @@ class RoundAllocationView(APIView):
                     round=round_obj,
                     user=user,
                     role=role
+                )
+                ActivityLog.objects.create(
+                    user=user,
+                    round=round_obj,
+                    role=role,
+                    action='allocated'
                 )
             
             # Update round status
@@ -283,6 +290,14 @@ class JoinRoundView(APIView):
                 link=f"/admin/rounds/{round_obj.id}/waiting-room/"
             )
             
+            # Create an activity log entry
+            ActivityLog.objects.create(
+                user=request.user,
+                round=round_obj,
+                role='Spectator',  # Initial role when joining
+                action='joined'
+            )
+            
             return Response({
                 "round_id": round_obj.id,
                 "message": "Successfully joined round"
@@ -402,6 +417,15 @@ class RoundResultView(APIView):
                 'Results for {format} round are now available!',
                 '/round/{round_id}'
             )
+            
+            # Create activity log entries for completion
+            for allocation in round_obj.allocations.all():
+                ActivityLog.objects.create(
+                    user=allocation.user,
+                    round=round_obj,
+                    role=allocation.role,
+                    action='completed'
+                )
             
             return Response({
                 "message": "Round results submitted successfully",
